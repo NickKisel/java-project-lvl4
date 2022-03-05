@@ -1,4 +1,9 @@
 package hexlet.code.controllers;
 
-public class WelcomeController {
+import io.javalin.http.Handler;
+
+public final class WelcomeController {
+    public static Handler welcome = ctx -> {
+        ctx.result("Hello, world");
+    };
 }
