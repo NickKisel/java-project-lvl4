@@ -1,6 +1,6 @@
 package hexlet.code;
 
-import hexlet.code.controllers.WelcomeController;
+import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -14,23 +14,37 @@ public final class App {
         return Integer.valueOf(port);
     }
 
+    private static String getMode() {
+        return System.getenv().getOrDefault("APP_ENV", "production");
+    }
+
+    private static boolean isProduction() {
+        return getMode().equals("production");
+    }
+
     private static TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.addDialect(new LayoutDialect());
-        templateEngine.addDialect(new Java8TimeDialect());
+
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
+
         templateEngine.addTemplateResolver(templateResolver);
+        templateEngine.addDialect(new LayoutDialect());
+        templateEngine.addDialect(new Java8TimeDialect());
+
         return templateEngine;
     }
 
     private static void addRoutes(Javalin app) {
-        app.get("/", WelcomeController.welcome);
+        app.get("/", RootController.welcome);
     }
 
     public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
-            config.enableDevLogging();
+            if (!isProduction()) {
+                config.enableDevLogging();
+            }
+            config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
         addRoutes(app);
