@@ -2,8 +2,8 @@ package hexlet.code.controllers;
 
 import io.javalin.http.Handler;
 
-public final class WelcomeController {
+public final class RootController {
     public static Handler welcome = ctx -> {
-        ctx.result("Hello, world");
+        ctx.render("index.html");
     };
 }
