@@ -20,10 +20,10 @@ public final class Article {
     private String description;
 
     @WhenCreated
-    private Instant created_at;
+    private Instant createdAt;
 
     @WhenModified
-    private  Instant updated_at;
+    private  Instant updatedAt;
 
     public Article() {
     }
@@ -45,11 +45,11 @@ public final class Article {
         return description;
     }
 
-    public Instant getCreated_at() {
-        return created_at;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public Instant getUpdated_at() {
-        return updated_at;
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 }
