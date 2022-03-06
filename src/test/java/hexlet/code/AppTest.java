@@ -1,15 +1,15 @@
 package hexlet.code;
 
-//import io.ebean.DB;
-//import io.ebean.Transaction;
+import io.ebean.DB;
+import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +17,7 @@ class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
-//    private static Transaction transaction;
+    private static Transaction transaction;
 
     @BeforeAll
     public static void beforeAll() {
@@ -32,15 +32,15 @@ class AppTest {
         app.stop();
     }
 
-//    @BeforeEach
-//    void beforeEach() {
-//        transaction = DB.beginTransaction();
-//    }
-//
-//    @AfterEach
-//    void afterEach() {
-//        transaction.rollback();
-//    }
+    @BeforeEach
+    void beforeEach() {
+        transaction = DB.beginTransaction();
+    }
+
+    @AfterEach
+    void afterEach() {
+        transaction.rollback();
+    }
 
     @Test
     void testWelcome() {
@@ -48,6 +48,8 @@ class AppTest {
         assertThat(response.getStatus()).isEqualTo(200);
 
         String content = response.getBody();
-        assertThat(content).contains("Hello, world");
+        assertThat(content).contains("Анализатор страниц");
+        assertThat(content).contains("Бесплатно проверяйте сайты на SEO пригодность");
+        assertThat(content).contains("Nickolai Kisel");
     }
 }
