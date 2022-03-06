@@ -9,7 +9,7 @@ import javax.persistence.Lob;
 import java.time.Instant;
 
 @Entity
-public final class Article {
+public final class Url {
 
     @Id
     private long id;
@@ -25,10 +25,10 @@ public final class Article {
     @WhenModified
     private  Instant updatedAt;
 
-    public Article() {
+    public Url() {
     }
 
-    public Article(String name, String description) {
+    public Url(String name, String description) {
         this.name = name;
         this.description = description;
     }
