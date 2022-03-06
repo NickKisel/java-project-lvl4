@@ -21,6 +21,9 @@ build:
 run:
 	./gradlew run
 
+generate-migrations:
+	./gradlew generateMigrations
+
 stop:
 	./gradlew --stop
 
