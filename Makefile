@@ -1,30 +1,34 @@
-.DEFAULT_GOAL := build-run
+setup:
+	gradle wrapper --gradle-version 7.2
 
-install:
-	./gradlew clean install
-
-run-dist:
-	./build/install/app/bin/app
-
-check-updates:
-	./gradlew dependencyUpdates
-
-lint:
-	./gradlew checkstyleMain checkstyleTest
-
-report:
-	./gradlew jacocoTestReport
+clean:
+	./gradlew clean
 
 build:
 	./gradlew clean build
 
-run:
-	./gradlew run
+start:
+	APP_ENV=development ./gradlew run
+
+install:
+	./gradlew install
+
+start-dist:
+	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
 
 generate-migrations:
 	./gradlew generateMigrations
 
-stop:
-	./gradlew --stop
+lint:
+	./gradlew checkstyleMain checkstyleTest
+
+test:
+	./gradlew test
+
+report:
+	./gradlew jacocoTestReport
+
+check-updates:
+	./gradlew dependencyUpdates
 
 .PHONY: build
