@@ -58,19 +58,27 @@ class AppTest {
     @Test
     void testCreateValidUrl() {
         String name = "https://ru.wikipedia.org";
-        HttpResponse<String> response = Unirest
+        HttpResponse<String> responsePost = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", name)
                         .asEmpty();
 
-        assertThat(response.getStatus()).isEqualTo(302);
-        assertThat(response.getHeaders().getFirst("Location")).isEqualTo("/urls");
+        assertThat(responsePost.getStatus()).isEqualTo(302);
+        assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
         Url actualUrl = new QUrl()
                 .name.equalTo(name)
                 .findOne();
         assertThat(actualUrl).isNotNull();
         assertThat(actualUrl.getName()).isEqualTo(name);
+
+        HttpResponse<String> responseGet = Unirest
+                .get(baseUrl + "/urls")
+                .asString();
+
+        String body = responseGet.getBody();
+
+        assertThat(body).contains("Страница успешно добавлена");
     }
 
     @Test
@@ -98,6 +106,38 @@ class AppTest {
                 .findOne();
 
         assertThat(actualUrl).isNull();
+    }
+
+    @Test
+    void testCreateExistUrl() {
+        String url1 = "https://ru.wikipedia.org";
+        HttpResponse<String> responsePost1 = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", url1)
+                .asEmpty();
+        assertThat(responsePost1.getStatus()).isEqualTo(302);
+
+        Url checkUrl = new QUrl()
+                .name.equalTo(url1)
+                .findOne();
+
+        assertThat(checkUrl.getName()).isNotNull();
+        assertThat(checkUrl.getName()).isEqualTo(url1);
+
+        HttpResponse<String> responsePost2 = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", url1)
+                .asEmpty();
+        assertThat(responsePost2.getStatus()).isEqualTo(302);
+        assertThat(responsePost2.getHeaders().getFirst("Location")).isEqualTo("/urls");
+
+        HttpResponse<String> responseGet1 = Unirest
+                .get(baseUrl + "/urls")
+                .asString();
+
+        String body = responseGet1.getBody();
+
+        assertThat(body).contains("Страница уже существует");
     }
 
     @Test
