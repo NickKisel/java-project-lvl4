@@ -3,4 +3,4 @@ ebean:
     useDocker: false
     platform: h2
     ddlMode: dropCreate
-    dbName: test
+    dbName: database
