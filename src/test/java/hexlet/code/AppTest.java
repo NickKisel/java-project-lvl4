@@ -7,11 +7,17 @@ import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,18 +26,23 @@ class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Transaction transaction;
+    private static MockWebServer mockWebServer;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException {
         app = App.getApp();
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
+
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
     }
 
     @AfterAll
-    public static void afterAll() {
+    public static void afterAll() throws IOException {
         app.stop();
+        mockWebServer.shutdown();
     }
 
     @BeforeEach
@@ -128,6 +139,7 @@ class AppTest {
                 .post(baseUrl + "/urls")
                 .field("url", url1)
                 .asEmpty();
+
         assertThat(responsePost2.getStatus()).isEqualTo(302);
         assertThat(responsePost2.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
@@ -146,14 +158,59 @@ class AppTest {
                 .post(baseUrl + "/urls")
                 .field("url", "https://ru.wikipedia.org")
                 .asEmpty();
+
         HttpResponse<String> postResponse2 = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", "https://ru.hexlet.io")
                 .asEmpty();
+
         HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
+
         assertThat(response.getStatus()).isEqualTo(200);
+
         String content = response.getBody();
         assertThat(content).contains("https://ru.wikipedia.org");
         assertThat(content).contains("https://ru.hexlet.io");
+    }
+
+    @Test
+    void testShowUrl() throws IOException {
+        String urlMock = mockWebServer.url("/").toString();
+        String name = urlMock.substring(0, urlMock.length() - 1);
+
+        String bodyOfMockResponse = Files.readString(Paths.get("src", "test", "resources", "mock", "mock"));
+
+        MockResponse mockResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(bodyOfMockResponse);
+
+        mockWebServer.enqueue(mockResponse);
+
+        HttpResponse<String> postResponse = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", name)
+                .asEmpty();
+
+        Url url = new QUrl()
+                .name.equalTo(name)
+                .findOne();
+
+        long id = url.getId();
+
+        HttpResponse<String> postResponseToChecks = Unirest
+                .post(baseUrl + "/urls/" + id + "/checks")
+                .asEmpty();
+
+        assertThat(postResponseToChecks.getStatus()).isEqualTo(302);
+        assertThat(postResponseToChecks.getHeaders().getFirst("Location")).isEqualTo("/urls/" + id);
+
+
+        HttpResponse<String> getResponse = Unirest.get(baseUrl + "/urls/" + id).asString();
+        String body = getResponse.getBody();
+
+        assertThat(body).contains("200");
+        assertThat(body).contains("Hello Mock");
+        assertThat(body).contains("Trying to use Mock");
+        assertThat(body).contains("Win with Mock?");
     }
 }
