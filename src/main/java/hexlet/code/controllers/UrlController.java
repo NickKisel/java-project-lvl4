@@ -25,16 +25,10 @@ public final class UrlController {
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
         int rowsPerPage = 10;
 
-        QUrl url = QUrl.alias();
-        QUrlCheck check = QUrlCheck.alias();
-
         PagedList<Url> pagedUrls = new QUrl()
                 .setFirstRow(page * rowsPerPage)
                 .setMaxRows(rowsPerPage)
-                .select(url.id, url.name)
                 .orderBy().id.asc()
-                .urlChecks.fetch(check.createdAt, check.statusCode)
-                .orderBy().urlChecks.id.desc()
                 .findPagedList();
 
         List<Url> urls = pagedUrls.getList();
