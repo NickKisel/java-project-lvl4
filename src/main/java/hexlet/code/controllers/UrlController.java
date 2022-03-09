@@ -113,10 +113,10 @@ public final class UrlController {
             UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
             urlCheck.save();
 
-            ctx.sessionAttribute("flash", "Сайт успешно проверен");
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.sessionAttribute("flash-type", "success");
         } catch (UnirestException exception) {
-            ctx.sessionAttribute("flash", "Не удалось проверить сайт");
+            ctx.sessionAttribute("flash", "Не удалось проверить страницу");
             ctx.sessionAttribute("flash-type", "danger");
         }
         ctx.redirect("/urls/" + id);
