@@ -212,5 +212,6 @@ class AppTest {
         assertThat(body).contains("Hello Mock");
         assertThat(body).contains("Trying to use Mock");
         assertThat(body).contains("Win with Mock?");
+        assertThat(body).contains("Страница успешно проверена");
     }
 }
