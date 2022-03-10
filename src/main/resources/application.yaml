@@ -7,7 +7,7 @@ datasource:
   production:
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
-    url: ${JDBC_DATABASE_URL}
+    url: "jdbc:postgresql://ec2-52-44-209-165.compute-1.amazonaws.com:5432/d2s6v7954qvpot?password=8939e6181ff8b24ce1dc3b2122d30fa916d1d59e36a4af18d6dbb59be47e9e58&sslmode=require&user=hashtkhvjnqszr"
 
 ebean:
   migration:
