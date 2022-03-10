@@ -16,7 +16,6 @@ import org.jsoup.nodes.Document;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -107,8 +106,18 @@ public final class UrlController {
             Document document = Jsoup.parse(responseGet.getBody());
 
             String title = document.title();
-            String description = Objects.requireNonNull(document.selectFirst("meta[name=description]")).attr("content");
-            String h1 = Objects.requireNonNull(document.selectFirst("h1")).text();
+
+            String description = null;
+
+            if (document.selectFirst("meta[name=description]") != null) {
+                description = document.selectFirst("meta[name=description]").attr("content");
+            }
+
+            String h1 = null;
+
+            if (document.selectFirst("h1") != null) {
+                h1 = document.selectFirst("h1").text();
+            }
 
             UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
             urlCheck.save();
