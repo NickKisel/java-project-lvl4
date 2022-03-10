@@ -72,7 +72,7 @@ class AppTest {
         HttpResponse<String> responsePost = Unirest
                 .post(baseUrl + "/urls")
                 .field("url", name)
-                        .asEmpty();
+                .asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(302);
         assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
